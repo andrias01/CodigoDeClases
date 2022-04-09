@@ -3,8 +3,11 @@ git log --oneline  //esto para entrar de manera online
 git remote --v  //Como el servidor esta de manera remota entramos con este codigo
 git fetch //para ver que actualizaciones han puesto en el codigo
 git pull origin master //poner mis archivos como lo tiene el servidor principal
-git status //Ver como esta el servidor y que cambios colocaron para decidor si actualizar mis archivos
+git status //Ver que esta nuevo en mis archivos que no tenga el servidor
 git add (El nombre del archivo nuevo)
 git diff //para ver que tiene dentro el archivo
 git add .  //agregar el archivo
 git push //para cargarlo
+
+
+git log -p -4  // para ver los cambios
