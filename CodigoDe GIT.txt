@@ -1,12 +1,34 @@
+git --version       //Esto es para ver la version de git instalada
+git init         //Es para iniciar a git , el crea un nuevo directorio oculto
+git checkout -- .    //Esto es para regresar mi codigo desde el ultimo commit (util)
+
+git log     // Esto me permite ver todos los commit que he guardado
 git log --oneline -4    //Esto es para entrar a la rama master o main
 git log --oneline  //esto para entrar de manera online
+
+git add .  //acomoda los archivos para la foto , los deja en una instancia
+git add (El nombre del archivo en especifico que voy a preparar para el commit)
+
+git commit --amend //Esto es para editar el mensaje del ultimo commit (Luego presiono I para poder editarlo y cuando termine preciono ESC y luego escrivo :WQ y luego enter)
+git commit -am "mensaje"  //Esto es para hacer los comandos add y commit de manera simultanea
+
+git checkout -b (Nombre de la rama) //Esto es para crear una rama
+git checkout (Nombre de rama)   //Esto es para cambiar de rama en rama
+git marge (Nombre de rama)   //Esto es para fucionar una rama a la rama actual ose el codigo(Luego presiono I para poder editarlo despues ESC y luego escrivo :WQ! y luego enter)
+git branch  //Esto es para ver que ramas existen
+git branch -d (Nombre de rama) //Esto es para eliminar una rama
+
+git push   //Este comando es para subir todo mi repositorio local al repositorio en la nube
+
+
 git remote --v  //Como el servidor esta de manera remota entramos con este codigo
 git fetch //para ver que actualizaciones han puesto en el codigo
 git pull origin master //poner mis archivos como lo tiene el servidor principal
 git status //Ver que esta nuevo en mis archivos que no tenga el servidor
-git add (El nombre del archivo nuevo)
+
 git diff //para ver que tiene dentro el archivo
-git add .  //agregar el archivo
+
+git reset .    // Invierte lo comando git add . 
 git push //para cargarlo
 
 
