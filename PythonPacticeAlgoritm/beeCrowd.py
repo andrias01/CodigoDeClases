@@ -1,4 +1,68 @@
 import time
+#PROBLEMA 1014
+#______________________________________
+#PROBLEMA 1013
+#______________________________________
+#PROBLEMA 1012
+#______________________________________
+#PROBLEMA 1011
+#______________________________________
+#PROBLEMA 1010
+# Leer los datos del primer producto
+codigo1, cantidad1, precio1 = input().split()
+codigo1 = int(codigo1)
+cantidad1 = int(cantidad1)
+precio1 = float(precio1)
+
+# Leer los datos del segundo producto
+codigo2, cantidad2, precio2 = input().split()
+codigo2 = int(codigo2)
+cantidad2 = int(cantidad2)
+precio2 = float(precio2)
+
+# Calcular el valor total a pagar
+total = (cantidad1 * precio1) + (cantidad2 * precio2)
+
+# Imprimir el resultado con el formato requerido
+print(f"VALOR A PAGAR: R$ {total:.2f}")
+
+#______________________________________
+#PROBLEMA 1009
+employeName = (input())  
+salary = float(input())  
+sales = float(input())   
+
+salaryCostbySales = (sales*(15/100))+salary
+
+print(f"TOTAL = R$ {salaryCostbySales:.2f}")
+#______________________________________
+#PROBLEMA 1008
+# Leer los valores de entrada
+numero_empleado = int(input())  # Número del empleado
+horas_trabajadas = int(input())  # Horas trabajadas en el mes
+pago_por_hora = float(input())  # Pago por hora trabajada
+
+# Calcular el salario
+salario = horas_trabajadas * pago_por_hora
+
+# Imprimir el resultado con el formato requerido
+print(f"NUMBER = {numero_empleado}")
+print(f"SALARY = U$ {salario:.2f}")
+
+#______________________________________
+#PROBLEMA 1007
+# Leer cuatro valores enteros desde la entrada
+A = int(input())  
+B = int(input())  
+C = int(input())  
+D = int(input())  
+
+# Calcular la diferencia de los productos
+DIFERENCA = (A * B) - (C * D)
+
+# Imprimir el resultado con el formato correcto
+print(f"DIFERENCA = {DIFERENCA}")
+
 #______________________________________
 lista = ["314", "1", "3", "10", "3", "5"]
 
@@ -60,7 +124,7 @@ calcular_media(A, B, C)
 
 #-------------------calse analisis
 # Aumentar el límite de recursión
-sys.setrecursionlimit(10**6)  # Ajusta según necesites, pero ten cuidado
+##sys.setrecursionlimit(10**6)  # Ajusta según necesites, pero ten cuidado
 
 def factorial(n):
     if n == 1:

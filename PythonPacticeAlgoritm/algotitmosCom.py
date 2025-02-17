@@ -1,26 +1,31 @@
 import time
 import os
 import sys
+"""
+12 1 5.30
+16 2 5.10
 
-lista = ["314", "1", "3", "10", "3", "5"]
+VALOR A PAGAR: R$ 15.50
+"""
+# Leer los datos del primer producto
+codigo1, cantidad1, precio1 = input().split()
+codigo1 = int(codigo1)
+cantidad1 = int(cantidad1)
+precio1 = float(precio1)
 
-def bigSorting(unsorted):
-    n = len(unsorted) #define numero de la longitud de la lista
-    print(f"La longitud de la lista es {n}")
-    
-    # Implementación de Bubble Sort
-    for i in range(n):
-        for j in range(0, n-i-1):
-            ##print(f"lugar {i} valor = {}")
-            # Comparamos los elementos según la longitud y luego lexicográficamente
-            if len(unsorted[j]) > len(unsorted[j + 1]) or \
-               (len(unsorted[j]) == len(unsorted[j + 1]) and unsorted[j] > unsorted[j + 1]):
-                # Intercambiamos si el orden es incorrecto
-                unsorted[j], unsorted[j + 1] = unsorted[j + 1], unsorted[j]
+# Leer los datos del segundo producto
+codigo2, cantidad2, precio2 = input().split()
+codigo2 = int(codigo2)
+cantidad2 = int(cantidad2)
+precio2 = float(precio2)
 
-    return unsorted
+# Calcular el valor total a pagar
+total = (cantidad1 * precio1) + (cantidad2 * precio2)
 
-print(f"la lista ordenada es {bigSorting(lista)}")
+# Imprimir el resultado con el formato requerido
+print(f"VALOR A PAGAR: R$ {total:.2f}")
+
+
 
 
 time.sleep(15)
