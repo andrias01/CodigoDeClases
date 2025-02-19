@@ -2,28 +2,36 @@ import time
 import os
 import sys
 """
-12 1 5.30
-16 2 5.10
+Make a program that reads three floating point values: A, B and C. Then, calculate and show:
+a) the area of the rectangled triangle that has base A and height C.
+b) the area of the radius's circle C. (pi = 3.14159)
+c) the area of the trapezium which has A and B by base, and C by height.
+d) the area of ​​the square that has side B.
+e) the area of the rectangle that has sides A and B.
+3.0 4.0 5.2
 
-VALOR A PAGAR: R$ 15.50
+TRIANGULO: 7.800
+CIRCULO: 84.949
+TRAPEZIO: 18.200
+QUADRADO: 16.000
+RETANGULO: 12.000
+A = float(A)
+A = float(A)
+A = float(A)
 """
-# Leer los datos del primer producto
-codigo1, cantidad1, precio1 = input().split()
-codigo1 = int(codigo1)
-cantidad1 = int(cantidad1)
-precio1 = float(precio1)
+A,B,C = map(float,input().split())
+pi = 3.14159
+retangledArea=(A*C)/2
+circleArea=pi*(C**2)
+trapeziumArea=(A+B)*C/2
+squareArea=B**2
+retangleArea=A*B
 
-# Leer los datos del segundo producto
-codigo2, cantidad2, precio2 = input().split()
-codigo2 = int(codigo2)
-cantidad2 = int(cantidad2)
-precio2 = float(precio2)
-
-# Calcular el valor total a pagar
-total = (cantidad1 * precio1) + (cantidad2 * precio2)
-
-# Imprimir el resultado con el formato requerido
-print(f"VALOR A PAGAR: R$ {total:.2f}")
+print(f"TRIANGULO: {retangledArea:.3f}")
+print(f"CIRCULO: {circleArea:.3f}")
+print(f"TRAPEZIO: {trapeziumArea:.3f}")
+print(f"QUADRADO: {squareArea:.3f}")
+print(f"RETANGULO: {retangleArea:.3f}")
 
 
 

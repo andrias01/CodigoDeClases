@@ -6,6 +6,11 @@ import time
 #PROBLEMA 1012
 #______________________________________
 #PROBLEMA 1011
+R = int(input())
+pi = 3.14159
+formula = (4/3)*pi*(R**3)
+
+print(f"VOLUME = {formula:.3f}")
 #______________________________________
 #PROBLEMA 1010
 # Leer los datos del primer producto
