@@ -5,6 +5,238 @@ import time
 #_________________________________________
 #_________________________________________
 #_________________________________________
+#_________________________________________
+n=8
+contador = 0
+columna = [False]*n #verifica si la columna ya tiene una reina
+diagonal_izq = [False]*(n*2) #verifica si la diagonal izquierda ya tiene una reina
+diagonal_der = [False]*(n*2) #verifica si la diagonal derecha ya tiene una reina
+
+def backtrack(y,n,contador): #y es la fila, n es el tamaño del tablero
+    if y == n: #si se han colocado todas las reinas
+        print("Solucion encontrada")
+        return contador+1
+    for x in range(n):
+        global columnas, diagonal_izq, diagonal_der
+        if(columnas[x] or diagonal_izq[x+y] or diagonal_der[x-y+n-1]): #verifica si la columna o la diagonal ya tiene una reina
+            continue
+        columnas[x] = diagonal_izq[x+y] = diagonal_der[x-y+n-1] = True #coloca la reina
+        contador = backtrack(y+1,n,contador)
+        columnas[x] = diagonal_izq[x+y] = diagonal_der[x-y+n-1] = False
+    return contador
+print(backtrack(0,n,contador)) #llama a la funcion backtrack 
+print(diagonal_der)
+#https://github.com/danielTeniente/guia_de_competencia/blob/master/Backtraking/Algoritmos_recursivos_backtracking.ipynb
+#_________________________________________
+import random
+import time
+
+def imprimir_tablero(tablero):
+    print("Estado actual del tablero:")
+    for fila in tablero:
+        print(" ".join(str(num) if num != 0 else '.' for num in fila))
+    print("\n")
+    #time.sleep(3)  # Detener la ejecución por 3 segundos
+
+def es_valido(tablero, fila, columna, numero):
+    print(f"Verificando si {numero} puede colocarse en la posición ({fila}, {columna})")
+    for i in range(9):
+        if tablero[fila][i] == numero:
+            print(f"{numero} ya está en la fila {fila}")
+            return False
+        if tablero[i][columna] == numero:
+            print(f"{numero} ya está en la columna {columna}")
+            return False
+    caja_x, caja_y = 3 * (fila // 3), 3 * (columna // 3)
+    for i in range(3):
+        for j in range(3):
+            # print(imprimir_tablero(tablero))
+            if tablero[caja_x + i][caja_y + j] == numero:
+                print(f"{numero} ya está en la subcuadrícula {caja_x // 3}, {caja_y // 3}")
+                return False
+    return True
+
+def encontrar_vacio(tablero):
+    print("Buscando la siguiente celda vacía...")
+    for i in range(9):
+        for j in range(9):
+            if tablero[i][j] == 0:
+                print(f"Celda vacía encontrada en ({i}, {j})")
+                return i, j
+    print("No se encontraron celdas vacías, el Sudoku está completo.")
+    return None
+
+def resolver(tablero):
+    vacio = encontrar_vacio(tablero)
+    if not vacio:
+        imprimir_tablero(tablero)
+        print("Sudoku resuelto exitosamente!")
+        return True
+    fila, columna = vacio
+    for numero in range(1, 10):
+        if es_valido(tablero, fila, columna, numero):
+            print(f"Colocando {numero} en ({fila}, {columna})")
+            tablero[fila][columna] = numero
+            imprimir_tablero(tablero)
+            if resolver(tablero):
+                return True
+            print(f"Retrocediendo: Eliminando {numero} de ({fila}, {columna})")
+            tablero[fila][columna] = 0
+    return False
+
+def cargar_tablero():
+    print("Cargando el tablero inicial...")
+    return [
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0]
+    ]
+
+# Cargar y resolver el tablero
+sudoku_tablero = cargar_tablero()
+print("Tablero inicial:")
+imprimir_tablero(sudoku_tablero)
+print("Resolviendo Sudoku paso a paso:")
+resolver(sudoku_tablero)
+#_________________________________________
+def sumDigitos(n,k):
+    total = sum(int(digits) for digits in n) * k
+
+    while total >=10:
+        total = sum(int(digits) for digits in str(total))
+    return print(total)
+
+def sumDigitos(n,k):    
+    def super_digito(num):
+            if num < 10:
+                return num
+                #se llama a si misma hasta que el numero es menor a 10
+            return super_digito(sum(int(digit) for digit in str(num)))
+
+    # Paso inicial: calcular la suma de los dígitos del número original multiplicado por k
+    total2 = sum(int(digit) for digit in n) * k
+    #Cuando tengo la suma llamo la funcion super_digito hasta que es menor a 10
+    return super_digito(total2)
+#_________________________________________
+def factorial(n):
+    if n == 0:
+        return 1
+    return n * factorial(n-1)
+
+print(factorial(5))
+##En esta pagina muestra de manera grafica la recursividad https://pythontutor.com/
+
+def factorial1(n,acumulador =1):
+    if n == 0:
+        return acumulador
+    return factorial(n-1, n* acumulador)
+factorial1(5)
+
+#_________________________________________
+"""
+El algoritmo de Dijkstra encuentra el camino más corto entre un nodo dado (el nodo de origen) y todos los otros nodos del grafo. Este algoritmo usa los valores de los arcos para encontrar el camino que minimiza el valor total entre el nodo de origen y los demás nodos del grafo.
+"""
+#_________________________________________
+#O(1) - Tiempo constante    
+def acceso_constante(lista):
+    return lista[0]  # Acceder al primer elemento siempre toma el mismo tiempo
+
+mi_lista = [10, 20, 30, 40]
+print(acceso_constante(mi_lista))  # O(1)
+
+#O(log n) - Tiempo logarítmico
+def busqueda_binaria(lista, objetivo):
+    izquierda, derecha = 0, len(lista) - 1
+    while izquierda <= derecha:
+        medio = (izquierda + derecha) // 2
+        if lista[medio] == objetivo:
+            return medio
+        elif lista[medio] < objetivo:
+            izquierda = medio + 1
+        else:
+            derecha = medio - 1
+    return -1  # No encontrado
+
+mi_lista = [1, 3, 5, 7, 9, 11, 13]
+print(busqueda_binaria(mi_lista, 7))  # O(log n)
+
+#O(n) - Tiempo lineal
+def suma_elementos(lista):
+    total = 0
+    for numero in lista:
+        total += numero  # Recorre toda la lista
+    return total
+
+mi_lista = [1, 2, 3, 4, 5]
+print(suma_elementos(mi_lista))  # O(n)
+#O(n log n) - Tiempo logarítmico lineal
+def merge_sort(lista):
+    if len(lista) <= 1:
+        return lista
+    medio = len(lista) // 2
+    izquierda = merge_sort(lista[:medio])
+    derecha = merge_sort(lista[medio:])
+    
+    return merge(izquierda, derecha)
+
+def merge(izquierda, derecha):
+    resultado = []
+    i = j = 0
+    while i < len(izquierda) and j < len(derecha):
+        if izquierda[i] < derecha[j]:
+            resultado.append(izquierda[i])
+            i += 1
+        else:
+            resultado.append(derecha[j])
+            j += 1
+    resultado.extend(izquierda[i:])
+    resultado.extend(derecha[j:])
+    return resultado
+
+mi_lista = [3, 1, 4, 1, 5, 9, 2, 6]
+print(merge_sort(mi_lista))  # O(n log n)
+#O(n²) - Tiempo cuadrático
+def burbuja(lista):
+    n = len(lista)
+    for i in range(n):
+        for j in range(n - 1):
+            if lista[j] > lista[j + 1]:  # Comparación y posible intercambio
+                lista[j], lista[j + 1] = lista[j + 1], lista[j]
+    return lista
+
+mi_lista = [5, 3, 8, 4, 2]
+print(burbuja(mi_lista))  # O(n²)
+#O(2ⁿ) - Tiempo exponencial
+def fibonacci(n):
+    if n <= 1:
+        return n
+    return fibonacci(n - 1) + fibonacci(n - 2)  # Llamadas recursivas
+
+print(fibonacci(5))  
+# O(2ⁿ)
+def fibonacci(n):
+    if n <= 1:
+        return n
+    return fibonacci(n - 1) + fibonacci(n - 2)  # Llamadas recursivas
+
+print(fibonacci(5))  
+
+# O(2ⁿ)
+from itertools import permutations
+
+def permutaciones(lista):
+    return list(permutations(lista))
+
+mi_lista = [1, 2, 3]
+print(permutaciones(mi_lista))  # O(n!)
+
+#_________________________________________
 def isPalindrome(self, x):
     x_str = str(x)  # Convertimos el número a string   O(n)
     return x_str == x_str[::-1]  # Comparamos con su versión invertida
