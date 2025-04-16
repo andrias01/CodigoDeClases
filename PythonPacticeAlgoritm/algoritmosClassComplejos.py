@@ -4,7 +4,259 @@ import time
 #_________________________________________
 #_________________________________________
 #_________________________________________
+# --------------------------------------
+# Algoritmo genético para resolver las 8 reinas
+# --------------------------------------
+
+import numpy as np
+import matplotlib.pyplot as plt
+from geneticalgorithm import geneticalgorithm as ga
+
+# --------------------------------------
+# Parámetros generales del problema
+# --------------------------------------
+
+tamaño_tablero = 8                     # Tablero de 8x8
+dimension = tamaño_tablero            # Una variable por columna
+maximo_fitness = (tamaño_tablero * (tamaño_tablero - 1)) / 2  # Máximo fitness sin ataques
+
+
+# --------------------------------------
+# Función para contar ataques entre reinas
+# --------------------------------------
+
+def verificar_ataques(estado_tablero):
+    ataques = 0
+    for i in range(tamaño_tablero):
+        for j in range(i + 1, tamaño_tablero):
+            # Misma fila o en la misma diagonal
+            if estado_tablero[i] == estado_tablero[j] or abs(estado_tablero[i] - estado_tablero[j]) == j - i:
+                ataques += 1
+    return ataques
+
+# --------------------------------------
+# Función objetivo (a minimizar)
+# --------------------------------------
+
+def calcular_fitness(X):
+    cromosoma = X.astype(int).tolist()
+    ataques = verificar_ataques(cromosoma)
+    return -(maximo_fitness - ataques)  # Más fitness si menos ataques
+
+# --------------------------------------
+# Espacio de búsqueda
+# Cada reina puede ir en una fila entre 1 y 8
+# --------------------------------------
+
+limites_variables = np.array([[1, tamaño_tablero]] * dimension)
+
+# --------------------------------------
+# Parámetros del algoritmo genético
+# --------------------------------------
+
+parametros_algoritmo = {
+    'max_num_iteration': 400,
+    'population_size': 100,
+    'mutation_probability': 0.1,
+    'elit_ratio': 0.01,
+    'crossover_probability': 0.5,
+    'parents_portion': 0.3,
+    'crossover_type': 'uniform',
+    'max_iteration_without_improv': None
+}
+
+# --------------------------------------
+# Inicialización del modelo genético
+# --------------------------------------
+
+modelo = ga(
+    function=calcular_fitness,
+    dimension=dimension,
+    variable_type='int',
+    variable_boundaries=limites_variables,
+    algorithm_parameters=parametros_algoritmo
+)
+
+# --------------------------------------
+# Función para imprimir tablero en modo texto
+# --------------------------------------
+
+def imprimir_tablero(solucion):
+    for fila in range(tamaño_tablero):
+        linea = ""
+        for columna in range(tamaño_tablero):
+            if solucion[columna] == fila + 1:  # +1 porque va de 1 a 8
+                linea += " Q "
+            else:
+                linea += " . "
+        print(linea)
+
+# --------------------------------------
+# Función para mostrar tablero gráfico
+# --------------------------------------
+
+def mostrar_tablero_grafico(solucion):
+    tamaño = len(solucion)
+    fig, ax = plt.subplots()
+
+    # Dibujar casillas del tablero
+    for fila in range(tamaño):
+        for col in range(tamaño):
+            color = 'cornsilk' if (fila + col) % 2 == 0 else 'gray'
+            ax.add_patch(plt.Rectangle((col, tamaño - fila - 1), 1, 1, color=color))
+
+    # Dibujar reinas (ajustando fila - 1)
+    for col, fila in enumerate(solucion):
+        fila_ajustada = fila - 1  # Convertimos de 1-8 a 0-7
+        ax.text(col + 0.5, tamaño - fila_ajustada - 0.5, '♛',
+                ha='center', va='center', fontsize=30, color='red')
+
+    ax.set_xlim(0, tamaño)
+    ax.set_ylim(0, tamaño)
+    ax.set_xticks([])
+    ax.set_yticks([])
+    plt.gca().set_aspect('equal', adjustable='box')
+    plt.title("Solución de las 8 Reinas", fontsize=16)
+    plt.show()
+
+
+# --------------------------------------
+# Ejecutar el algoritmo y mostrar resultados
+# --------------------------------------
+
+modelo.run()
+
+# Obtener mejor solución
+mejor_solucion = modelo.output_dict['variable'].astype(int).tolist()
+
+print("\nTablero solución (modo texto):")
+imprimir_tablero(mejor_solucion)
+
+mostrar_tablero_grafico(mejor_solucion)
 #_________________________________________
+# import matplotlib.pyplot as plt
+# Importamos NumPy para manejo de arreglos
+import numpy as np
+# Importamos el módulo de algoritmo genético
+from geneticalgorithm import geneticalgorithm as ga
+
+# --------------------------------------
+# Parámetros generales del problema
+# --------------------------------------
+
+# Tamaño del tablero (8x8)
+tamaño_tablero = 8
+
+# Número de variables del problema (una por columna)
+dimension = tamaño_tablero
+
+# Máximo valor posible de "fitness" (es decir, 0 ataques entre reinas)
+# Se calcula cuántos pares únicos de reinas se pueden formar: C(n,2)
+maximo_fitness = (tamaño_tablero * (tamaño_tablero - 1)) / 2
+
+
+# def mostrar_tablero_grafico(solucion):
+#     tamaño = len(solucion)
+#     fig, ax = plt.subplots()
+#     # Dibujar las casillas
+#     for fila in range(tamaño):
+#         for col in range(tamaño):
+#             color = 'cornsilk' if (fila + col) % 2 == 0 else 'gray'
+#             ax.add_patch(plt.Rectangle((col, tamaño - fila - 1), 1, 1, color=color))
+    
+#     # Dibujar las reinas
+#     for col, fila in enumerate(solucion):
+#         ax.text(col + 0.5, tamaño - fila + 0.5 - 1, '♛', ha='center', va='center', fontsize=30, color='red')
+    
+#     ax.set_xlim(0, tamaño)
+#     ax.set_ylim(0, tamaño)
+#     ax.set_xticks([])
+#     ax.set_yticks([])
+#     plt.gca().set_aspect('equal', adjustable='box')
+#     plt.title("Solución de las 8 Reinas", fontsize=16)
+#     plt.show()
+
+# --------------------------------------
+# Función para verificar cuántos ataques hay en el tablero
+# --------------------------------------
+
+def verificar_ataques(estado_tablero):
+    ataques = 0
+    # Comparamos cada reina con las demás que están a su derecha
+    for i in range(tamaño_tablero):
+        for j in range(i + 1, tamaño_tablero):
+            # Si están en la misma fila o en la misma diagonal, hay un ataque
+            if estado_tablero[i] == estado_tablero[j] or abs(estado_tablero[i] - estado_tablero[j]) == j - i:
+                ataques += 1
+    return ataques
+
+# --------------------------------------
+# Función objetivo del algoritmo genético (a minimizar)
+# --------------------------------------
+
+def calcular_fitness(X):
+    cromosoma = X.astype(int).tolist()
+    ataques = verificar_ataques(cromosoma)
+    # El fitness ideal es 0 ataques, así que se devuelve el negativo para que el algoritmo lo minimice
+    return -(maximo_fitness - ataques)
+
+# --------------------------------------
+# Definición del espacio de búsqueda
+# Cada variable (reina) puede ir en una fila entre 1 y 8
+# (una reina por columna)
+# --------------------------------------
+
+limites_variables = np.array([[1, tamaño_tablero]] * dimension)
+
+# --------------------------------------
+# Configuración del algoritmo genético
+# --------------------------------------
+
+parametros_algoritmo = {
+    'max_num_iteration': 1000,        # Número máximo de generaciones
+    'population_size': 100,          # Tamaño de la población
+    'mutation_probability': 0.1,     # Probabilidad de mutación
+    'elit_ratio': 0.01,              # Porcentaje de élite que pasa directamente a la siguiente generación
+    'crossover_probability': 0.5,    # Probabilidad de cruce
+    'parents_portion': 0.3,          # Porcentaje de padres seleccionados
+    'crossover_type': 'uniform',     # Tipo de cruce (uniforme en este caso)
+    'max_iteration_without_improv': None  # Iteraciones sin mejora antes de detenerse
+}
+
+# --------------------------------------
+# Inicialización del modelo genético
+# --------------------------------------
+
+modelo = ga(
+    function=calcular_fitness,               # Función objetivo a minimizar
+    dimension=dimension,                     # Número de variables
+    variable_type='int',                     # Tipo de variable: entero
+    variable_boundaries=limites_variables,   # Límites por variable
+    algorithm_parameters=parametros_algoritmo
+)
+
+# --------------------------------------
+# Ejecutamos el algoritmo
+# --------------------------------------
+def imprimir_tablero(solucion):
+    for fila in range(len(solucion)):
+        linea = ""
+        for columna in range(len(solucion)):
+            if solucion[columna] == fila + 1:  # fila +1 porque el resultado va de 1 a 8
+                linea += " Q "
+            else:
+                linea += " . "
+        print(linea)
+
+# mostrar_tablero_grafico(mejor_solucion)
+modelo.run()
+# Obtener la mejor solución encontrada
+mejor_solucion = modelo.output_dict['variable'].astype(int).tolist()
+
+print("\nTablero solución (modo texto):")
+imprimir_tablero(mejor_solucion)
+
+
 #_________________________________________
 n=8
 contador = 0
