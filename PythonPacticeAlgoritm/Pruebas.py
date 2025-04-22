@@ -3,9 +3,9 @@ import random
 
 # Parámetros generales
 N = 8  # Tamaño del tablero y número de reinas
-POBLACION_INICIAL = 100
+POBLACION_INICIAL = 400
 GENERACIONES = 500
-PROB_MUTACION = 0.2
+PROB_MUTACION = 0.01
 
 # --------------------------------------
 # Función de evaluación (fitness)
@@ -99,9 +99,29 @@ for fila in range(N):
         else:
             linea += " . "
     print(linea)
+# poblacionPrueba = [crear_individuo() for _ in range(POBLACION_INICIAL)]
+# print("Población inicial:")
+# for i in range(POBLACION_INICIAL):
+#     print(poblacionPrueba[i])
+
+# poblacionPrueba.sort(key=calcular_ataques)
+# print("\nPoblación ordenada por ataques:")
+# for i in range(POBLACION_INICIAL):
+#     print(f"{poblacionPrueba[i]} +  - Ataques:  + {str(calcular_ataques(poblacionPrueba[i]))}")
 
 
+# padre1 = seleccion(poblacionPrueba)
+# padre2 = seleccion(poblacionPrueba)
+# print(f"\nPadre 1: {padre1} - Ataques: {str(calcular_ataques(padre1))}")
+# print(f"Padre 2: {padre2} - Ataques: {str(calcular_ataques(padre2))}")
 
+# hijo = cruzar(padre1, padre2)
+# print(f"\nHijo: {hijo} - Ataques: {str(calcular_ataques(hijo))}")
+
+# print(random.random())
+
+# hijoMutado = mutar(hijo)
+# print(f"\nHijo mutado: {hijoMutado} - Ataques: {str(calcular_ataques(hijoMutado))}")
 time.sleep(200)
 
 
