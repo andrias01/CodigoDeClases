@@ -3,11 +3,13 @@ import time
 #_________________________________________
 #_________________________________________
 #_________________________________________
+import time
 import random
+import matplotlib.pyplot as plt
 
 # Parámetros generales
-N = 8  # Tamaño del tablero y número de reinas
-POBLACION_INICIAL = 400
+N = 8 # Tamaño del tablero y número de reinas
+POBLACION_INICIAL = 400   
 GENERACIONES = 500
 PROB_MUTACION = 0.01
 
@@ -63,8 +65,8 @@ def mutar(individuo):
 # --------------------------------------
 
 def algoritmo_genetico():
-    poblacion = [crear_individuo() for _ in range(POBLACION_INICIAL)]
-    for generacion in range(GENERACIONES):
+    poblacion = [crear_individuo() for _ in range(POBLACION_INICIAL)]#400
+    for generacion in range(GENERACIONES):#500
         poblacion.sort(key=calcular_ataques)
         mejor = poblacion[0]
         if calcular_ataques(mejor) == 0:
@@ -85,6 +87,32 @@ def algoritmo_genetico():
     return poblacion[0]
 
 # --------------------------------------
+# Visualización del tablero de ajedrez
+def mostrar_tablero_grafico(solucion):
+    tamaño = N
+    fig, ax = plt.subplots()
+
+    # Dibujar casillas del tablero
+    for fila in range(tamaño):
+        for col in range(tamaño):
+            color = 'cornsilk' if (fila + col) % 2 == 0 else 'gray'
+            ax.add_patch(plt.Rectangle((col, tamaño - fila - 1), 1, 1, color=color))
+
+    # Dibujar reinas (ajustando fila - 1)
+    for col, fila in enumerate(solucion):
+        fila_ajustada = fila
+        ax.text(col + 0.5, tamaño - fila_ajustada - 0.5, '♛',
+                ha='center', va='center', fontsize=30, color='red')
+
+    ax.set_xlim(0, tamaño)
+    ax.set_ylim(0, tamaño)
+    ax.set_xticks([])
+    ax.set_yticks([])
+    plt.gca().set_aspect('equal', adjustable='box')
+    plt.title("Solución de las 8 Reinas", fontsize=16)
+    plt.show()
+    
+# --------------------------------------
 # Ejecutar
 # --------------------------------------
 
@@ -103,6 +131,15 @@ for fila in range(N):
         else:
             linea += " . "
     print(linea)
+
+mostrar_tablero_grafico(solucion)
+
+
+# Exportar la solución a un archivo CSV
+with open("solucion_8_reinas.csv", "w") as f:
+    f.write(",".join(map(str, solucion)))
+print("\nSolución exportada a 'solucion_8_reinas.csv'")
+time.sleep(200)
 # poblacionPrueba = [crear_individuo() for _ in range(POBLACION_INICIAL)]
 # print("Población inicial:")
 # for i in range(POBLACION_INICIAL):
@@ -126,136 +163,183 @@ for fila in range(N):
 
 # hijoMutado = mutar(hijo)
 # print(f"\nHijo mutado: {hijoMutado} - Ataques: {str(calcular_ataques(hijoMutado))}")
-#_________________________________________
-# --------------------------------------
-# Algoritmo genético para resolver las 8 reinas
-# --------------------------------------
 
-import numpy as np
-import matplotlib.pyplot as plt
-from geneticalgorithm import geneticalgorithm as ga
+# ' Código VBA para visualizar el tablero de ajedrez en Excel
+# ' Este código debe ser ejecutado en el entorno de Excel VBA
+# con las teclas alt + F11
+# ' y luego pegado en un módulo nuevo.
+# ' Procedimiento principal para visualizar el tablero de ajedrez
+# Sub MostrarTablero8Reinas()
+#     ' Definir variables
+#     Dim solucion() As Integer
+#     Dim tablero As Range
+#     Dim fila As Integer, columna As Integer
+    
+#     ' Obtener la solución del algoritmo genético en Python
+#     ' Aquí puedes usar diferentes métodos:
+#     ' 1. Leer datos desde un archivo CSV exportado por Python
+#     ' 2. Ingresar la solución manualmente
+#     ' Para este ejemplo, usaremos la solución que has encontrado con tu código Python
+    
+#     ' Asumamos que guardaste tu solución en un archivo o la introduces manualmente
+#     solucion = ObtenerSolucion()
+    
+#     ' Configurar hoja de Excel
+#     Application.ScreenUpdating = False
+#     Sheets.Add.Name = "Tablero8Reinas"
+#     Set tablero = Sheets("Tablero8Reinas").Range("B2:I9")
+    
+#     ' Configurar el formato del tablero
+#     ConfigurarTablero tablero
+    
+#     ' Colocar las reinas en el tablero
+#     For columna = 0 To 7
+#         fila = solucion(columna)
+#         ColocarReina tablero, fila, columna
+#     Next columna
+    
+#     ' Ajustar tamaño de celdas y centrar la vista
+#     tablero.EntireColumn.ColumnWidth = 8
+#     tablero.EntireRow.RowHeight = 50
+#     tablero.Select
+    
+#     Application.ScreenUpdating = True
+    
+#     MsgBox "Tablero de 8 reinas creado exitosamente.", vbInformation
+# End Sub
 
-# --------------------------------------
-# Parámetros generales del problema
-# --------------------------------------
+# ' Función para obtener la solución del algoritmo genético
+# Function ObtenerSolucion() As Integer()
+#     Dim solucion(7) As Integer
+    
+#     ' Opción 1: Leer desde un archivo CSV generado por Python
+#     ' Uncomment and adjust the code below if using CSV
+#     '
+#     ' Dim fso As Object, txtFile As Object, filePath As String
+#     ' Dim txtLine As String
+#     ' Set fso = CreateObject("Scripting.FileSystemObject")
+#     ' filePath = Application.GetOpenFilename("Archivos CSV (*.csv),*.csv", , "Selecciona el archivo con la solución")
+#     ' If filePath <> "False" Then
+#     '     Set txtFile = fso.OpenTextFile(filePath, 1)
+#     '     txtLine = txtFile.ReadLine
+#     '     txtFile.Close
+#     '     
+#     '     Dim valores As Variant
+#     '     valores = Split(txtLine, ",")
+#     '     For i = 0 To 7
+#     '         solucion(i) = CInt(valores(i))
+#     '     Next i
+#     ' End If
+    
+#     ' Opción 2: Introducir manualmente la solución que obtuviste con Python
+#     ' Reemplaza estos valores con la solución generada por tu algoritmo genético
+#     solucion(0) = 0
+#     solucion(1) = 4
+#     solucion(2) = 7
+#     solucion(3) = 5
+#     solucion(4) = 2
+#     solucion(5) = 6
+#     solucion(6) = 1
+#     solucion(7) = 3
+    
+#     ' También podría ser a través de un InputBox para cada posición
+#     ' For i = 0 To 7
+#     '     solucion(i) = CInt(InputBox("Ingresa la fila para la reina en la columna " & i & " (0-7):"))
+#     ' Next i
+    
+#     ObtenerSolucion = solucion
+# End Function
 
-tamaño_tablero = 8                     # Tablero de 8x8
-dimension = tamaño_tablero            # Una variable por columna
-maximo_fitness = (tamaño_tablero * (tamaño_tablero - 1)) / 2  # Máximo fitness sin ataques
+# ' Procedimiento para configurar el aspecto visual del tablero
+# Sub ConfigurarTablero(tablero As Range)
+#     Dim fila As Integer, columna As Integer
+#     Dim celda As Range
+    
+#     ' Colorear el tablero en patrón de ajedrez
+#     For fila = 1 To 8
+#         For columna = 1 To 8
+#             Set celda = tablero.Cells(fila, columna)
+            
+#             ' Configurar celda
+#             With celda
+#                 .HorizontalAlignment = xlCenter
+#                 .VerticalAlignment = xlCenter
+#                 .Font.Size = 20
+#                 .Font.Bold = True
+                
+#                 ' Patrón de colores del tablero
+#                 If (fila + columna) Mod 2 = 0 Then
+#                     .Interior.Color = RGB(255, 206, 158) ' Color claro
+#                 Else
+#                     .Interior.Color = RGB(209, 139, 71) ' Color oscuro
+#                 End If
+                
+#                 .Borders.LineStyle = xlContinuous
+#                 .Borders.Weight = xlThin
+#             End With
+#         Next columna
+#     Next fila
+    
+#     ' Añadir coordenadas alrededor del tablero
+#     For i = 1 To 8
+#         ' Números de fila (1-8)
+#         Sheets("Tablero8Reinas").Cells(i + 1, 1).Value = 9 - i
+#         Sheets("Tablero8Reinas").Cells(i + 1, 1).Font.Bold = True
+#         Sheets("Tablero8Reinas").Cells(i + 1, 1).HorizontalAlignment = xlCenter
+        
+#         ' Letras de columna (a-h)
+#         Sheets("Tablero8Reinas").Cells(1, i + 1).Value = Chr(96 + i)
+#         Sheets("Tablero8Reinas").Cells(1, i + 1).Font.Bold = True
+#         Sheets("Tablero8Reinas").Cells(1, i + 1).HorizontalAlignment = xlCenter
+#     Next i
+# End Sub
 
+# ' Procedimiento para colocar una reina en el tablero
+# Sub ColocarReina(tablero As Range, fila As Integer, columna As Integer)
+#     ' Coloca el símbolo de la reina (♛) en la celda correspondiente
+#     tablero.Cells(fila + 1, columna + 1).Value = "♛"
+#     ' También podrías usar "R" o ChrW(9819) que es el código Unicode para la reina
+# End Sub
 
-# --------------------------------------
-# Función para contar ataques entre reinas
-# --------------------------------------
+# ' Procedimiento alternativo para exportar la solución desde Python
+# Sub ImportarSolucionDesdeArchivo()
+#     Dim filePath As String
+#     filePath = Application.GetOpenFilename("Archivos CSV (*.csv),*.csv", , "Selecciona el archivo con la solución")
+    
+#     If filePath <> "False" Then
+#         With Sheets.Add.Name = "DatosSolucion"
+#             .Range("A1").Select
+#             With ActiveSheet.QueryTables.Add(Connection:="TEXT;" & filePath, Destination:=Range("A1"))
+#                 .Name = "Solución"
+#                 .FieldNames = True
+#                 .RowNumbers = False
+#                 .FillAdjacentFormulas = False
+#                 .PreserveFormatting = True
+#                 .RefreshOnFileOpen = False
+#                 .RefreshStyle = xlInsertDeleteCells
+#                 .SavePassword = False
+#                 .SaveData = True
+#                 .RefreshPeriod = 0
+#                 .TextFilePromptOnRefresh = False
+#                 .TextFilePlatform = 437
+#                 .TextFileStartRow = 1
+#                 .TextFileParseType = xlDelimited
+#                 .TextFileTextQualifier = xlTextQualifierDoubleQuote
+#                 .TextFileConsecutiveDelimiter = False
+#                 .TextFileTabDelimiter = False
+#                 .TextFileSemicolonDelimiter = False
+#                 .TextFileCommaDelimiter = True
+#                 .TextFileSpaceDelimiter = False
+#                 .TextFileColumnDataTypes = Array(1, 1, 1, 1, 1, 1, 1, 1)
+#                 .Refresh BackgroundQuery:=False
+#             End With
+            
+#             ' Luego puedes leer los valores de la solución desde esta hoja
+#             ' y usarlos para el procedimiento MostrarTablero8Reinas
+#         End With
+#     End If
+# End Sub
 
-def verificar_ataques(estado_tablero):
-    ataques = 0
-    for i in range(tamaño_tablero):
-        for j in range(i + 1, tamaño_tablero):
-            # Misma fila o en la misma diagonal
-            if estado_tablero[i] == estado_tablero[j] or abs(estado_tablero[i] - estado_tablero[j]) == j - i:
-                ataques += 1
-    return ataques
-
-# --------------------------------------
-# Función objetivo (a minimizar)
-# --------------------------------------
-
-def calcular_fitness(X):
-    cromosoma = X.astype(int).tolist()
-    ataques = verificar_ataques(cromosoma)
-    return -(maximo_fitness - ataques)  # Más fitness si menos ataques
-
-# --------------------------------------
-# Espacio de búsqueda
-# Cada reina puede ir en una fila entre 1 y 8
-# --------------------------------------
-
-limites_variables = np.array([[1, tamaño_tablero]] * dimension)
-
-# --------------------------------------
-# Parámetros del algoritmo genético
-# --------------------------------------
-
-parametros_algoritmo = {
-    'max_num_iteration': 400,
-    'population_size': 100,
-    'mutation_probability': 0.1,
-    'elit_ratio': 0.01,
-    'crossover_probability': 0.5,
-    'parents_portion': 0.3,
-    'crossover_type': 'uniform',
-    'max_iteration_without_improv': None
-}
-
-# --------------------------------------
-# Inicialización del modelo genético
-# --------------------------------------
-
-modelo = ga(
-    function=calcular_fitness,
-    dimension=dimension,
-    variable_type='int',
-    variable_boundaries=limites_variables,
-    algorithm_parameters=parametros_algoritmo
-)
-
-# --------------------------------------
-# Función para imprimir tablero en modo texto
-# --------------------------------------
-
-def imprimir_tablero(solucion):
-    for fila in range(tamaño_tablero):
-        linea = ""
-        for columna in range(tamaño_tablero):
-            if solucion[columna] == fila + 1:  # +1 porque va de 1 a 8
-                linea += " Q "
-            else:
-                linea += " . "
-        print(linea)
-
-# --------------------------------------
-# Función para mostrar tablero gráfico
-# --------------------------------------
-
-def mostrar_tablero_grafico(solucion):
-    tamaño = len(solucion)
-    fig, ax = plt.subplots()
-
-    # Dibujar casillas del tablero
-    for fila in range(tamaño):
-        for col in range(tamaño):
-            color = 'cornsilk' if (fila + col) % 2 == 0 else 'gray'
-            ax.add_patch(plt.Rectangle((col, tamaño - fila - 1), 1, 1, color=color))
-
-    # Dibujar reinas (ajustando fila - 1)
-    for col, fila in enumerate(solucion):
-        fila_ajustada = fila - 1  # Convertimos de 1-8 a 0-7
-        ax.text(col + 0.5, tamaño - fila_ajustada - 0.5, '♛',
-                ha='center', va='center', fontsize=30, color='red')
-
-    ax.set_xlim(0, tamaño)
-    ax.set_ylim(0, tamaño)
-    ax.set_xticks([])
-    ax.set_yticks([])
-    plt.gca().set_aspect('equal', adjustable='box')
-    plt.title("Solución de las 8 Reinas", fontsize=16)
-    plt.show()
-
-
-# --------------------------------------
-# Ejecutar el algoritmo y mostrar resultados
-# --------------------------------------
-
-modelo.run()
-
-# Obtener mejor solución
-mejor_solucion = modelo.output_dict['variable'].astype(int).tolist()
-
-print("\nTablero solución (modo texto):")
-imprimir_tablero(mejor_solucion)
-
-mostrar_tablero_grafico(mejor_solucion)
 #_________________________________________
 # import matplotlib.pyplot as plt
 # Importamos NumPy para manejo de arreglos

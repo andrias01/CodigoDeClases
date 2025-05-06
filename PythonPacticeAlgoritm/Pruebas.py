@@ -1,127 +1,299 @@
 import time
 import random
+import matplotlib.pyplot as plt
 
-# Parámetros generales
-N = 8  # Tamaño del tablero y número de reinas
-POBLACION_INICIAL = 400
-GENERACIONES = 500
-PROB_MUTACION = 0.01
+def dijkstra(grafo, inicio, fin=None):
+    """
+    Implementación del algoritmo de Dijkstra para encontrar el camino más corto
+    desde un nodo de origen a todos los demás nodos.
+    
+    Args:
+        grafo: Matriz de adyacencia donde grafo[i][j] representa el peso de la arista del nodo i al nodo j
+               (un valor de 0 indica que no hay conexión)
+        inicio: Nodo de origen
+        fin: Nodo destino (opcional, si solo queremos el camino a un nodo específico)
+    
+    Returns:
+        distancias: Lista donde cada elemento contiene [distancia acumulada, nodo de procedencia]
+    """
+    num_nodos = len(grafo)
+    
+    # Inicializar distancias: [distancia acumulada, nodo de procedencia]
+    # Usamos math.inf para representar infinito
+    import math
+    distancias = [[math.inf, '-'] for _ in range(num_nodos)]
+    distancias[inicio] = [0, '-']  # Distancia al nodo inicial es 0
+    
+    # Conjunto de nodos visitados
+    visitados = [False] * num_nodos
+    
+    for _ in range(num_nodos):
+        # Encontrar el nodo no visitado con la distancia mínima
+        distancia_min = math.inf
+        nodo_min = -1
+        
+        for i in range(num_nodos):
+            if not visitados[i] and distancias[i][0] < distancia_min:
+                distancia_min = distancias[i][0]
+                nodo_min = i
+        
+        # Si no encontramos ningún nodo accesible, terminamos
+        if nodo_min == -1:
+            break
+            
+        # Marcar el nodo como visitado
+        visitados[nodo_min] = True
+        
+        # Si hemos llegado al nodo destino, podemos terminar
+        if fin is not None and nodo_min == fin:
+            break
+        
+        # Actualizar las distancias de los nodos adyacentes
+        for i in range(num_nodos):
+            # Si hay una arista desde nodo_min hasta i
+            if grafo[nodo_min][i] > 0:
+                # Calcular nueva distancia potencial
+                nueva_distancia = distancias[nodo_min][0] + grafo[nodo_min][i]
+                
+                # Si la nueva distancia es menor que la actual
+                if nueva_distancia < distancias[i][0]:
+                    # Actualizar distancia y nodo de procedencia
+                    # Convertimos nodo_min a letra (A=0, B=1, etc.)
+                    nodo_origen = chr(nodo_min + 65)  # 65 es el código ASCII de 'A'
+                    distancias[i] = [nueva_distancia, nodo_origen]
+    
+    return distancias
 
-# --------------------------------------
-# Función de evaluación (fitness)
-# --------------------------------------
+def imprimir_camino(distancias, inicio, fin):
+    """
+    Imprime el camino más corto desde el nodo de inicio al nodo final.
+    
+    Args:
+        distancias: Resultado del algoritmo de Dijkstra
+        inicio: Nodo de origen
+        fin: Nodo destino
+    
+    Returns:
+        Una lista con los nodos del camino
+    """
+    import math
+    
+    if distancias[fin][0] == math.inf:
+        print(f"No hay camino de {chr(inicio + 65)} a {chr(fin + 65)}")
+        return []
+    
+    camino = []
+    actual = fin
+    
+    # Reconstruir el camino desde el final hasta el inicio
+    while actual != inicio:
+        camino.append(chr(actual + 65))
+        # Encontrar el nodo de procedencia
+        nodo_origen = ord(distancias[actual][1]) - 65
+        actual = nodo_origen
+    
+    camino.append(chr(inicio + 65))
+    camino.reverse()
+    
+    print(f"Camino más corto de {chr(inicio + 65)} a {chr(fin + 65)}: {' -> '.join(camino)}")
+    print(f"Distancia total: {distancias[fin][0]}")
+    
+    # Convertir el camino de letras a índices
+    camino_indices = [ord(nodo) - 65 for nodo in camino]
+    return camino_indices
 
-def calcular_ataques(tablero):
-    ataques = 0
-    for i in range(N):
-        for j in range(i + 1, N):
-            if tablero[i] == tablero[j] or abs(tablero[i] - tablero[j]) == abs(i - j):
-                ataques += 1
-    return ataques
-   
-# --------------------------------------
-# Generar una solución aleatoria (una reina por columna, fila aleatoria)
-# --------------------------------------
+def crear_grafo_manual(num_nodos, aristas=None):
+    """
+    Crea un grafo manualmente especificando las aristas y sus pesos.
+    
+    Args:
+        num_nodos: Número de nodos en el grafo
+        aristas: Lista de tuplas (origen, destino, peso) donde origen y destino son 
+                índices (0 para A, 1 para B, etc.) o letras ('A', 'B', etc.)
+    
+    Returns:
+        Matriz de adyacencia que representa el grafo
+    """
+    grafo = [[0 for _ in range(num_nodos)] for _ in range(num_nodos)]
+    
+    if aristas:
+        for arista in aristas:
+            # Si el origen y destino se proporcionan como letras, convertirlos a índices
+            if isinstance(arista[0], str):
+                origen = ord(arista[0].upper()) - 65  # 'A' -> 0, 'B' -> 1, etc.
+            else:
+                origen = arista[0]
+                
+            if isinstance(arista[1], str):
+                destino = ord(arista[1].upper()) - 65
+            else:
+                destino = arista[1]
+                
+            peso = arista[2]
+            
+            # Verificar que los índices son válidos
+            if 0 <= origen < num_nodos and 0 <= destino < num_nodos:
+                grafo[origen][destino] = peso
+    
+    return grafo
 
-def crear_individuo():
-    return [random.randint(0, N - 1) for _ in range(N)]
+def visualizar_grafo(grafo, camino=None):
+    """
+    Visualiza el grafo y el camino más corto usando matplotlib.
+    
+    Args:
+        grafo: Matriz de adyacencia del grafo
+        camino: Lista de índices de nodos que forman el camino más corto (opcional)
+    """
+    import matplotlib.pyplot as plt
+    import networkx as nx
+    import numpy as np
+    
+    # Crear un grafo dirigido
+    G = nx.DiGraph()
+    
+    # Número de nodos
+    num_nodos = len(grafo)
+    
+    # Añadir nodos con etiquetas de letras
+    node_labels = {}
+    for i in range(num_nodos):
+        letra = chr(i + 65)  # Convertir índice a letra (A, B, C...)
+        G.add_node(letra)
+        node_labels[letra] = letra
+    
+    # Añadir aristas con pesos
+    for i in range(num_nodos):
+        for j in range(num_nodos):
+            if grafo[i][j] > 0:
+                origen = chr(i + 65)
+                destino = chr(j + 65)
+                G.add_edge(origen, destino, weight=grafo[i][j])
+    
+    # Crear figura
+    plt.figure(figsize=(12, 8))
+    
+    # Posicionamiento de los nodos en círculo
+    pos = nx.circular_layout(G)
+    
+    # Dibujar nodos
+    nx.draw_networkx_nodes(G, pos, node_size=700, node_color='lightblue')
+    
+    # Dibujar etiquetas de nodos
+    nx.draw_networkx_labels(G, pos, labels=node_labels, font_size=14, font_weight='bold')
+    
+    # Dibujar aristas
+    nx.draw_networkx_edges(G, pos, width=1.0, alpha=0.5, arrowsize=15)
+    
+    # Dibujar pesos de aristas
+    edge_labels = {}
+    for i in range(num_nodos):
+        for j in range(num_nodos):
+            if grafo[i][j] > 0:
+                origen = chr(i + 65)
+                destino = chr(j + 65)
+                edge_labels[(origen, destino)] = grafo[i][j]
+    
+    nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_size=12, font_weight='bold')
+    
+    # Si se proporciona un camino, resaltar las aristas
+    if camino and len(camino) > 1:
+        # Convertir los índices del camino a letras
+        camino_letras = [chr(idx + 65) for idx in camino]
+        
+        # Crear pares de nodos para las aristas del camino
+        camino_aristas = [(camino_letras[i], camino_letras[i + 1]) for i in range(len(camino_letras) - 1)]
+        
+        # Resaltar las aristas del camino
+        nx.draw_networkx_edges(G, pos, edgelist=camino_aristas, width=3.0, edge_color='red', arrowsize=20)
+    
+    plt.title("Visualización del Grafo y Camino Más Corto", size=15)
+    plt.axis('off')
+    
+    # Mostrar la visualización
+    plt.tight_layout()
+    plt.savefig('grafo_visualizado.png')
+    plt.close()
 
-# --------------------------------------
-# Selección por torneo: selecciona al mejor de dos individuos aleatorios
-# --------------------------------------
+# Definir un único grafo para analizar
+num_nodos = 8  # Grafo con 8 nodos (A-H)
 
-def seleccion(poblacion):
-    mejor = random.choice(poblacion)
-    oponente = random.choice(poblacion)
-    return mejor if calcular_ataques(mejor) < calcular_ataques(oponente) else oponente
+# Definir las aristas del grafo
+# Formato: (origen, destino, peso)
+aristas = [
+    ('A', 'B', 3),  # A -> B con peso 3
+    ('A', 'C', 1),  # A -> C con peso 1
+    ('B', 'D', 1),  # B -> D con peso 1
+    ('B', 'G', 5),  # B -> G con peso 5
+    ('C', 'D', 2),  # C -> D con peso 2
+    ('C', 'F', 5),  # C -> F con peso 5
+    ('D', 'E', 4),  # D -> E con peso 4
+    ('D', 'F', 2),  # D -> F con peso 2
+    ('E', 'G', 2),  # E -> G con peso 2
+    ('E', 'H', 1),  # E -> H con peso 1
+    ('F', 'H', 3),  # F -> H con peso 3
+]
 
-# --------------------------------------
-# Cruce de un punto
-# --------------------------------------
+# Crear el grafo
+grafo = crear_grafo_manual(num_nodos, aristas)
 
-def cruzar(padre1, padre2):
-    punto = random.randint(1, N - 2)
-    hijo = padre1[:punto] + padre2[punto:]
-    return hijo
+# Mostrar el grafo
+print("Matriz de adyacencia del grafo:")
+for i, fila in enumerate(grafo):
+    print(f"{chr(65+i)}: {fila}")
 
-# --------------------------------------
-# Mutación: cambia una reina a otra fila aleatoria
-# --------------------------------------
+# Nodo de origen para el algoritmo de Dijkstra
+nodo_inicio = 0  # 0 = A
+nodo_destino = 7  # 7 = H
 
-def mutar(individuo):
-    if random.random() < PROB_MUTACION:
-        i = random.randint(0, N - 1)
-        individuo[i] = random.randint(0, N - 1)
-    return individuo
+# Ejecutar algoritmo de Dijkstra
+resultado = dijkstra(grafo, nodo_inicio)
 
-# --------------------------------------
-# Algoritmo Genético principal
-# --------------------------------------
+# Mostrar resultados
+print("\nResultados del algoritmo de Dijkstra desde el nodo A:")
+print("Nodo | [Distancia acumulada, Procedencia]")
+print("-" * 40)
 
-def algoritmo_genetico():
-    poblacion = [crear_individuo() for _ in range(POBLACION_INICIAL)]
-    for generacion in range(GENERACIONES):
-        poblacion.sort(key=calcular_ataques)
-        mejor = poblacion[0]
-        if calcular_ataques(mejor) == 0:
-            print(f"\n¡Solución encontrada en la generación {generacion}!")
-            return mejor
+for i in range(num_nodos):
+    nombre_nodo = chr(i + 65)
+    distancia = resultado[i][0]
+    import math
+    if distancia == math.inf:
+        texto_distancia = "inf"
+    else:
+        texto_distancia = str(distancia)
+    
+    nodo_origen = resultado[i][1]
+    print(f"  {nombre_nodo}  | [{texto_distancia}, {nodo_origen}]")
 
-        nueva_poblacion = []
-        while len(nueva_poblacion) < POBLACION_INICIAL:
-            padre1 = seleccion(poblacion)
-            padre2 = seleccion(poblacion)
-            hijo = cruzar(padre1, padre2)
-            hijo = mutar(hijo)
-            nueva_poblacion.append(hijo)
+# Visualizar el grafo completo
+visualizar_grafo(grafo)
+print("\nSe ha guardado la visualización del grafo como 'grafo_visualizado.png'")
 
-        poblacion = nueva_poblacion
+# Encontrar el camino más corto al nodo destino
+print(f"\nCamino más corto desde el nodo A hasta el nodo H:")
+camino = imprimir_camino(resultado, nodo_inicio, nodo_destino)
 
-    print("\nNo se encontró una solución perfecta.")
-    return poblacion[0]
+# Visualizar el grafo con el camino resaltado
+if camino:
+    visualizar_grafo(grafo, camino)
+    print("Se ha guardado la visualización del camino como 'grafo_visualizado.png' (sobrescribiendo el anterior)")
 
-# --------------------------------------
-# Ejecutar
-# --------------------------------------
+"""
+# Para modificar el grafo, cambia la lista de aristas:
+aristas = [
+    ('A', 'B', 5),  # A -> B con peso 5
+    ('B', 'C', 3),  # ... etc
+    # Añade todas las conexiones que necesites
+]
 
-solucion = algoritmo_genetico()
+# Y vuelve a crear el grafo:
+grafo = crear_grafo_manual(num_nodos, aristas)
 
-print("\nCromosoma ganador (solución):")
-print(solucion)
-print(f"\nNúmero de ataques: {calcular_ataques(solucion)}")
+# Para cambiar los nodos de origen y destino, modifica:
+nodo_inicio = 0  # 0 = A
+nodo_destino = 7  # 7 = H
+"""
 
-print("\nTablero (modo texto):")
-for fila in range(N):
-    linea = ""
-    for col in range(N):
-        if solucion[col] == fila:
-            linea += " Q "
-        else:
-            linea += " . "
-    print(linea)
-# poblacionPrueba = [crear_individuo() for _ in range(POBLACION_INICIAL)]
-# print("Población inicial:")
-# for i in range(POBLACION_INICIAL):
-#     print(poblacionPrueba[i])
-
-# poblacionPrueba.sort(key=calcular_ataques)
-# print("\nPoblación ordenada por ataques:")
-# for i in range(POBLACION_INICIAL):
-#     print(f"{poblacionPrueba[i]} +  - Ataques:  + {str(calcular_ataques(poblacionPrueba[i]))}")
-
-
-# padre1 = seleccion(poblacionPrueba)
-# padre2 = seleccion(poblacionPrueba)
-# print(f"\nPadre 1: {padre1} - Ataques: {str(calcular_ataques(padre1))}")
-# print(f"Padre 2: {padre2} - Ataques: {str(calcular_ataques(padre2))}")
-
-# hijo = cruzar(padre1, padre2)
-# print(f"\nHijo: {hijo} - Ataques: {str(calcular_ataques(hijo))}")
-
-# print(random.random())
-
-# hijoMutado = mutar(hijo)
-# print(f"\nHijo mutado: {hijoMutado} - Ataques: {str(calcular_ataques(hijoMutado))}")
-time.sleep(200)
-
-
+# Quitar la espera al final
+time.sleep(200)  # Comentado para que el programa termine inmediatamente
