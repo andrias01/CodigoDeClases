@@ -1,0 +1,100 @@
+// Árbol Genealógico
+digraph {
+	splines=ortho
+	nodesep=0.8 ranksep=1.0
+	"P-M1" [label="P-1
+(MA)" fillcolor=darkgray fontcolor=white shape=box style=filled]
+	"P-F2" [label="P-2
+(FN)" fillcolor=white fontcolor=black shape=oval style=solid]
+	"F1-M1" [label="F1-1
+(M1N)" fillcolor=white fontcolor=black shape=box style=solid]
+	"F1-F2" [label="F1-2
+(F2A)" fillcolor=darkgray fontcolor=white shape=oval style=filled]
+	"F1-F3" [label="F1-3
+(F3N)" fillcolor=white fontcolor=black shape=oval style=solid]
+	"F1-M4" [label="F1-4
+(M4A)" fillcolor=darkgray fontcolor=white shape=box style=filled]
+	"F1-F-Spouse-FN-2259812124368" [label=FN fillcolor=white fontcolor=black shape=oval style=solid]
+	"F2-M1" [label="F2-1
+(M1N)" fillcolor=white fontcolor=black shape=box style=solid]
+	"F2-F2" [label="F2-2
+(F2N)" fillcolor=white fontcolor=black shape=oval style=solid]
+	"F2-F3" [label="F2-3
+(F3A)" fillcolor=darkgray fontcolor=white shape=oval style=filled]
+	"F2-F-Spouse-FA-2259812125328" [label=FA fillcolor=darkgray fontcolor=white shape=oval style=filled]
+	"F2-M-Spouse-MN-2259812125584" [label=MN fillcolor=white fontcolor=black shape=box style=solid]
+	"F3-M1" [label="F3-1
+(M1N)" fillcolor=white fontcolor=black shape=box style=solid]
+	"F3-F2" [label="F3-2
+(F2A)" fillcolor=darkgray fontcolor=white shape=oval style=filled]
+	"F3-M3" [label="F3-3
+(M3N)" fillcolor=white fontcolor=black shape=box style=solid]
+	"F3-F4" [label="F3-4
+(F4N)" fillcolor=white fontcolor=black shape=oval style=solid]
+	{
+		rank=same
+		"P-M1"
+		"P-F2"
+	}
+	{
+		rank=same
+		"F1-M1"
+		"F1-F2"
+		"F1-F3"
+		"F1-M4"
+		"F1-F-Spouse-FN-2259812124368"
+	}
+	{
+		rank=same
+		"F2-M1"
+		"F2-F2"
+		"F2-F3"
+		"F2-F-Spouse-FA-2259812125328"
+		"F2-M-Spouse-MN-2259812125584"
+	}
+	{
+		rank=same
+		"F3-M1"
+		"F3-F2"
+		"F3-M3"
+		"F3-F4"
+	}
+	union_node_Parental_to_F1 [label="" color=black height=0.15 shape=diamond style=filled width=0.15]
+	"P-M1" -> union_node_Parental_to_F1 [arrowhead=none]
+	"P-F2" -> union_node_Parental_to_F1 [arrowhead=none]
+	sib_conn_F1_from_P [height=0 shape=point width=0]
+	union_node_Parental_to_F1 -> sib_conn_F1_from_P [arrowhead=none]
+	sib_conn_F1_from_P -> "F1-M1" [arrowhead=none]
+	sib_conn_F1_from_P -> "F1-F2" [arrowhead=none]
+	"F1-M1" -> "F1-F2" [constraint=true style=invis weight=100]
+	sib_conn_F1_from_P -> "F1-F3" [arrowhead=none]
+	"F1-F2" -> "F1-F3" [constraint=true style=invis weight=100]
+	sib_conn_F1_from_P -> "F1-M4" [arrowhead=none]
+	"F1-F3" -> "F1-M4" [constraint=true style=invis weight=100]
+	union_node_G21 [label="" color=black height=0.15 shape=diamond style=filled width=0.15]
+	"F1-M4" -> union_node_G21 [arrowhead=none]
+	"F1-F-Spouse-FN-2259812124368" -> union_node_G21 [arrowhead=none]
+	sib_conn_G21 [height=0 shape=point width=0]
+	union_node_G21 -> sib_conn_G21 [arrowhead=none]
+	sib_conn_G21 -> "F2-M1" [arrowhead=none]
+	sib_conn_G21 -> "F2-F2" [arrowhead=none]
+	"F2-M1" -> "F2-F2" [constraint=true style=invis weight=100]
+	sib_conn_G21 -> "F2-F3" [arrowhead=none]
+	"F2-F2" -> "F2-F3" [constraint=true style=invis weight=100]
+	union_node_G31 [label="" color=black height=0.15 shape=diamond style=filled width=0.15]
+	"F2-M1" -> union_node_G31 [arrowhead=none]
+	"F2-F-Spouse-FA-2259812125328" -> union_node_G31 [arrowhead=none]
+	sib_conn_G31 [height=0 shape=point width=0]
+	union_node_G31 -> sib_conn_G31 [arrowhead=none]
+	sib_conn_G31 -> "F3-M1" [arrowhead=none]
+	union_node_G32 [label="" color=black height=0.15 shape=diamond style=filled width=0.15]
+	"F2-F2" -> union_node_G32 [arrowhead=none]
+	"F2-M-Spouse-MN-2259812125584" -> union_node_G32 [arrowhead=none]
+	sib_conn_G32 [height=0 shape=point width=0]
+	union_node_G32 -> sib_conn_G32 [arrowhead=none]
+	sib_conn_G32 -> "F3-F2" [arrowhead=none]
+	sib_conn_G32 -> "F3-M3" [arrowhead=none]
+	"F3-F2" -> "F3-M3" [constraint=true style=invis weight=100]
+	sib_conn_G32 -> "F3-F4" [arrowhead=none]
+	"F3-M3" -> "F3-F4" [constraint=true style=invis weight=100]
+}
