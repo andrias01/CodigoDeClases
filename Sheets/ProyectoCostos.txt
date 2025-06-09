@@ -1,0 +1,212 @@
+/**
+ * MENU AL ABRIR LA HOJA
+ */
+function onOpen() {
+  const ui = SpreadsheetApp.getUi();
+  ui.createMenu("Protección")
+    .addItem("Proteger esta hoja", "protegerHojaActiva")
+    .addItem("Proteger todo menos celda", "protegerTodoMenosCelda")
+    .addItem("Proteger el Rango escogido", "protegerRangoActivo")
+    .addSeparator()
+    .addItem("Desproteger esta hoja", "desprotegerHoja")
+    .addItem("Desproteger Rangos de esta hoja", "desprotegerRangosDeEstaHoja")
+    .addItem("Desproteger Rango Seleccionado", "desprotegerRangoSeleccionado")
+    .addToUi();
+
+    
+}
+
+/**
+ * PROTEGER
+ */
+function protegerHojaActiva() {
+  const hoja = SpreadsheetApp.getActiveSheet();
+  hoja.protect()
+    .setDescription("Protección de hoja activa")
+    .removeEditors(['andresjobpk@gmail.com']);
+}
+
+function protegerTodoMenosCelda() {
+  const hoja = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Analisis de Costo y Precio");
+  const rango = hoja.getRange('A7');
+  hoja.protect()
+    .setUnprotectedRanges([rango])
+    .setDescription("Protección de celda A7")
+    .removeEditors(['andresjobpk@gmail.com', 'sebastoro01@gmail.com']);
+}
+
+function protegerRangoActivo() {
+  const rango = SpreadsheetApp.getActiveSheet().getActiveRange();
+  rango.protect()
+    .setDescription("Protección de rango seleccionado")
+    .removeEditors(['andresjobpk@gmail.com', 'sebastoro01@gmail.com']);
+}
+
+/**
+ * DESPROTEGER
+ */
+function desprotegerHoja() {
+  const hoja = SpreadsheetApp.getActiveSheet();
+  const proteccion = hoja.getProtections(SpreadsheetApp.ProtectionType.SHEET);
+  if (proteccion.length) proteccion[0].remove();
+}
+
+function desprotegerRangosDeEstaHoja() {
+  const hoja = SpreadsheetApp.getActiveSheet();
+  const protecciones = hoja.getProtections(SpreadsheetApp.ProtectionType.RANGE);
+  protecciones.forEach(p => p.remove());
+}
+
+function desprotegerRangoSeleccionado() {
+  const hoja = SpreadsheetApp.getActiveSheet();
+  const rango = hoja.getActiveRange();
+  const protecciones = hoja.getProtections(SpreadsheetApp.ProtectionType.RANGE);
+  protecciones.forEach(p => {
+    if (p.getRange().getA1Notation() === rango.getA1Notation()) p.remove();
+  });
+}
+
+/**
+ * OBTENER ULTIMA FILA NO VACIA EN UNA COLUMNA
+ */
+function ultimaFilaaa2(col) {
+  const hoja = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  const datos = hoja.getRange(1, col, hoja.getMaxRows()).getValues();
+  for (let i = datos.length - 1; i >= 0; i--) {
+    if (datos[i][0]) return i + 2;
+  }
+}
+
+/**
+ * ACCIONES AL EDITAR CELDAS
+ */
+function onEdit(e) {
+  const archivo = SpreadsheetApp.getActiveSpreadsheet();
+  const hoja = e.source.getActiveSheet();
+  const nombreHoja = hoja.getName();
+  const celda = e.range;
+  const fila = celda.getRow();
+  const col = celda.getColumn();
+  const valor = celda.getValue();
+
+  aplicarPreciosGuardados();
+
+  if (nombreHoja === "Productos") {
+    if (fila === 2 && col === 5 && valor === "Ok") ordenarProductos(hoja);
+    if (fila === 3 && col === 5 && valor === "Ok") guardarProducto(hoja);
+  } else if (nombreHoja === "Materia Prima Y Costos" && fila === 2 && col === 9 && valor === "Ok") {
+    guardarMateriaPrima(hoja);
+  } else if (nombreHoja === "Recetas" && fila === 1 && col === 7 && valor === "Ok") {
+    ordenarRecetas(hoja);
+  } else if (nombreHoja === "Sub recetas" && fila === 1 && col === 11 && valor === "Ok") {
+    ordenarSubRecetas(hoja);
+  }
+
+  if (nombreHoja === "Precio y Costo Final") {
+    const nombreProducto = hoja.getRange(fila, 2).getValue(); // Col B
+    const precio = hoja.getRange(fila, 11).getValue(); // Col K
+    if (nombreProducto && precio) {
+      actualizarProductoPrecio(nombreProducto, precio);
+    }
+  }
+}
+
+
+
+/**
+ * FUNCIONES AUXILIARES
+ */
+function ordenarProductos(hoja) {
+  const ss = SpreadsheetApp.getActive();
+  ss.getRange('A3:C').createFilter();
+  ss.getSheetByName("Productos").getFilter().sort(3, true);
+  ss.getSheetByName("Productos").getFilter().remove();
+  hoja.getRange("F2").copyTo(hoja.getRange("E2"));
+}
+
+function guardarProducto(hoja) {
+  const rango = hoja.getRange(3, 1, 1, 3).getValues();
+  hoja.getRange(hoja.getLastRow() + 1, 1, 1, 3).setValues(rango);
+  hoja.getRange("A3:C3").clear({ contentsOnly: true });
+  hoja.getRange("F2").copyTo(hoja.getRange("E3"));
+}
+
+function guardarMateriaPrima(hoja) {
+  const uFila = ultimaFilaaa2(1);
+  const datos = hoja.getRange(3, 1, 1, 5).getValues();
+  hoja.getRange(uFila, 1, 1, 5).setValues(datos);
+  hoja.getRange(uFila, 7).setValues(hoja.getRange(3, 7).getValues());
+  hoja.getRange("A3:G3").clear({ contentsOnly: true });
+  const ss = SpreadsheetApp.getActive();
+  ss.getRange('A3:G').createFilter();
+  ss.getSheetByName("Materia Prima Y Costos").getFilter().sort(1, true);
+  ss.getSheetByName("Materia Prima Y Costos").getFilter().remove();
+  hoja.getRange("J2:J3").copyTo(hoja.getRange("I2:I3"));
+}
+
+function ordenarRecetas(hoja) {
+  const ss = SpreadsheetApp.getActive();
+  ss.getRange('A1:E').createFilter();
+  hoja.getFilter().sort(1, true);
+  hoja.getFilter().remove();
+  hoja.getRange("H1").copyTo(hoja.getRange("G1"));
+}
+
+function ordenarSubRecetas(hoja) {
+  const ss = SpreadsheetApp.getActive();
+  ss.getRange('A1:I').createFilter();
+  hoja.getFilter().sort(1, true);
+  hoja.getFilter().remove();
+  hoja.getRange("H1").copyTo(hoja.getRange("G1"));
+}
+function actualizarProductoPrecio(nombre, precio) {
+  const hojaPrecio = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("ProductoPrecio");
+  const datos = hojaPrecio.getDataRange().getValues();
+
+  for (let i = 0; i < datos.length; i++) {
+    if (datos[i][0] === nombre) {
+      hojaPrecio.getRange(i + 1, 2).setValue(precio);
+      return;
+    }
+  }
+
+  // Si no existe, agregar al final
+  hojaPrecio.appendRow([nombre, precio]);
+}
+function aplicarPreciosGuardados() {
+  const hojaPrecio = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("ProductoPrecio");
+  const hojaCosto = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Precio y Costo Final");
+
+  const basePrecios = hojaPrecio.getDataRange().getValues();
+  const mapaPrecios = {};
+
+  // Crear diccionario de nombre → precio, limpiando espacios y usando minúsculas
+  basePrecios.forEach(([nombre, precio]) => {
+    if (nombre && precio !== '') {
+      const nombreLimpio = nombre.toString().trim().toLowerCase();
+      mapaPrecios[nombreLimpio] = precio;
+    }
+  });
+
+  const ultimaFila = hojaCosto.getLastRow();
+  const datosCosto = hojaCosto.getRange(2, 2, ultimaFila - 1, 1).getValues(); // Columna B (nombre producto)
+
+  for (let i = 0; i < datosCosto.length; i++) {
+    const nombreProducto = datosCosto[i][0];
+    if (!nombreProducto) continue;
+
+    const nombreLimpio = nombreProducto.toString().trim().toLowerCase();
+    const nuevoPrecio = mapaPrecios[nombreLimpio];
+
+    if (nuevoPrecio !== undefined) {
+      hojaCosto.getRange(i + 2, 11).setValue(nuevoPrecio); // Fila i+2, Col K
+    }
+  }
+}
+
+
+
+
+
+
+
