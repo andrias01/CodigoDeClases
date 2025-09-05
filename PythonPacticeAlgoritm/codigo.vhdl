@@ -44,3 +44,63 @@ NET "segmentos[7]" LOC = N8;
 datos <= "0000"; wait for 100 ns; 
 datos <= "1000"; wait for 100 ns; 
 datos <= "0111"; wait for 100 ns;
+
+
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+entity tb_bcd_prueba is
+end tb_bcd_prueba;
+
+architecture Behavioral of tb_bcd_prueba is
+
+    -- Declaración del componente
+    component bcd_prueba
+    PORT(
+        datos : in STD_LOGIC_VECTOR(3 downto 0);
+        an : out STD_LOGIC_VECTOR(3 downto 0);
+        segmentos : out STD_LOGIC_VECTOR(6 downto 0)
+    );
+    end component;
+
+    -- Declaración de señales
+    signal datos : STD_LOGIC_VECTOR(3 downto 0);
+    signal an : STD_LOGIC_VECTOR(3 downto 0);
+    signal segmentos : STD_LOGIC_VECTOR(6 downto 0);
+    
+    -- Constante para el período del reloj (si lo necesitas)
+    constant clock_period : time := 10 ns;
+
+BEGIN
+
+    -- Instanciate the Unit Under Test (UUT)
+    uut: bcd_prueba PORT MAP (
+        datos => datos,
+        an => an,
+        segmentos => segmentos
+    );
+
+    -- Stimulus process
+    stim_proc: process
+    begin
+        -- hold reset state for 100 ns.
+        wait for 100 ns;
+
+        -- insert stimulus here
+        datos <= "0000"; wait for 100 ns;  -- Número 0
+        datos <= "0001"; wait for 100 ns;  -- Número 1
+        datos <= "0010"; wait for 100 ns;  -- Número 2
+        datos <= "0011"; wait for 100 ns;  -- Número 3
+        datos <= "0100"; wait for 100 ns;  -- Número 4
+        datos <= "0101"; wait for 100 ns;  -- Número 5
+        datos <= "0110"; wait for 100 ns;  -- Número 6
+        datos <= "0111"; wait for 100 ns;  -- Número 7
+        datos <= "1000"; wait for 100 ns;  -- Número 8
+        datos <= "1001"; wait for 100 ns;  -- Número 9
+        datos <= "1010"; wait for 100 ns;  -- Número A (hexadecimal)
+        datos <= "1111"; wait for 100 ns;  -- Número F (hexadecimal)
+        
+        wait;
+    end process;
+
+END;
